@@ -16,7 +16,6 @@ const loaderEl = document.querySelector(".loader");
 const onSearchFormSubmit = event => {
   event.preventDefault();
   const query = event.target.elements.picture_search.value.trim();
-  console.log(query);
 
   if (query === "") {
     galleryUl.innerHTML = "";
@@ -38,6 +37,7 @@ const onSearchFormSubmit = event => {
     })
     .then(data => {
       const linksTags = data.hits.map(img => {
+        
         return {
           linkWeb: img.webformatURL,
           linkBig: img.largeImageURL,
@@ -79,13 +79,14 @@ const onSearchFormSubmit = event => {
         .map(createGalleryItemMarkup)
         .join("");
       galleryUl.insertAdjacentHTML("beforeend", galleryItemsMarkup);
-      
+      searchForm.reset();
       const lightbox = new SimpleLightbox(".image-link", {
         focus: true,
         captionsData: "alt",
         captionDelay: 250
       });
       lightbox.show();
+      
     })
     .catch(error => {
       console.log(error);
