@@ -68,7 +68,7 @@ body{
   padding: 36px 156px;
 }
 
-.picture-and-data-list {
+.gallery {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -121,7 +121,7 @@ letter-spacing: 0.48px;
 }
     
 
-.search-form {
+.form {
     width: 371px;
     display: block;
    margin: 0 auto;
