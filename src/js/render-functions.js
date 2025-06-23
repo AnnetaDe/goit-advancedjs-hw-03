@@ -6,10 +6,9 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 // function imports
 import { fetchPhotosByQuery } from "./pixabay-api.js";
-const searchForm = document.querySelector(".form");
 const gallery = document.querySelector(".gallery");
-const loader= document.createElement("span");
-loader.classList.add("loader");
+const loader = document.querySelector(".loader");
+
 document.body.appendChild(loader);
 
 function createGalleryItemMarkup({
