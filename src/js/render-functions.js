@@ -10,7 +10,6 @@ const searchForm = document.querySelector(".form");
 const galleryUl = document.querySelector(".gallery");
 const loaderEl = document.querySelector(".loader");
 
-// Initialize SimpleLightbox
 
 function createGalleryItemMarkup({
   linkWeb,
