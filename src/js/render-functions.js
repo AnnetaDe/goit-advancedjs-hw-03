@@ -1,7 +1,6 @@
 export * from "./render-functions.js";
 
 // library imports
-import flatpickr from "flatpickr";
 import iziToast from "izitoast";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
