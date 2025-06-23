@@ -7,9 +7,10 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 // function imports
 import { fetchPhotosByQuery } from "./pixabay-api.js";
 const searchForm = document.querySelector(".form");
-const galleryUl = document.querySelector(".gallery");
-const loaderEl = document.querySelector(".loader");
-
+const gallery = document.querySelector(".gallery");
+const loader= document.createElement("span");
+loader.classList.add("loader");
+document.body.appendChild(loader);
 
 function createGalleryItemMarkup({
   linkWeb,
@@ -37,78 +38,101 @@ function createGalleryItemMarkup({
 `;
   return galleryItem;
 }
-const onSearchFormSubmit = event => {
+function createGalleryMarkup(images) {
+  return images.map(createGalleryItemMarkup).join("");
+}
+
+function renderGallery(images) {
+  const markup = createGalleryMarkup(images);
+  gallery.insertAdjacentHTML("beforeend", markup);
+}
+
+function clearGallery() {
+  gallery.innerHTML = "";
+}
+
+function showToast(message, type = "info") {
+  iziToast[type]({
+    message,
+    position: "topCenter"
+  });
+}
+function showLoader() {
+  loader.classList.add("is-visible");
+}
+function hideLoader() {
+  loader.classList.remove("is-visible");
+}
+
+function checkQuery(params) {
+  if (!params || !params.query) {
+    showToast("Invalid search query", "error");
+    return false;
+  }
+  return true;
+}
+function checkData(data) {
+  if (!data || !data.hits || data.hits.length === 0) {
+    showToast("No images found", "error");
+    return false;
+  }
+  return true;
+}
+
+function getImagesByQuery(query) {
+  return fetchPhotosByQuery(query)
+    .then(data => {
+      if (!checkData(data)) {
+        return [];
+      }
+      return data.hits.map(img => ({
+        linkWeb: img.webformatURL,
+        linkBig: img.largeImageURL,
+        tags: img.tags,
+        likes: img.likes,
+        views: img.views,
+        comments: img.comments,
+        downloads: img.downloads
+      }));
+    })
+    .catch(error => {
+      console.error("Error fetching images:", error);
+      showToast("Error fetching images", "error");
+      return [];
+    });
+}
+
+export const onSearchFormSubmit = event => {
   event.preventDefault();
   const query = event.target.elements.picture_search.value.trim();
 
-  if (query === "") {
-    galleryUl.innerHTML = "";
-    event.target.reset();
-    iziToast.error({
-      title: "Error",
-      message: "Please enter a search query",
-      position: "topCenter"
-    });
+  if (!checkQuery({ query })) {
     return;
   }
-  loaderEl.classList.add("is-visible");
-
-  fetchPhotosByQuery(query)
+  showLoader();
+  clearGallery();
+  getImagesByQuery(query)
+    .then(images => {
+      if (images.length > 0) {
+        renderGallery(images);
+        showToast(`Found ${images.length} images`, "success");
+        let lightbox;
+        if (!lightbox) {
+          lightbox = new SimpleLightbox(".gallery a", {
+            captionsData: "alt",
+            captionDelay: 250,
+          });
+        } else {
+          lightbox.refresh();
+        }
+    
+      } else {
+        showToast("No images found", "error");
+      }
+    })
     .finally(() => {
-      loaderEl.classList.remove("is-visible");
-    })
-    .then(data => {
-      const linksTags = data.hits.map(img => {
-        return {
-          linkWeb: img.webformatURL,
-          linkBig: img.largeImageURL,
-          tags: img.tags,
-          likes: img.likes,
-          views: img.views,
-          comments: img.comments,
-          downloads: img.downloads
-        };
-      });
-      if (data.totalHits === 0) {
-        iziToast.error({
-          title: "Error",
-          message: "No images found",
-          position: "topCenter"
-        });
-        return;
-      }
-
-
-
-      galleryUl.innerHTML = "";
-      const galleryItemsMarkup = linksTags
-        .map(createGalleryItemMarkup)
-        .join("");
-
-      galleryUl.insertAdjacentHTML("beforeend", galleryItemsMarkup);
-
-      iziToast.success({
-        title: "Success",
-        message: `Found ${data.totalHits} images`,
-        position: "topCenter"
-      });
-      searchForm.reset();
-
-
-      let lightbox;
-      if (!lightbox) {
-        lightbox = new SimpleLightbox(".image-link", {
-          focus: true,
-          captionsData: "alt",
-          captionDelay: 250
-        });
-      }
-    lightbox.refresh();
-
-    })
-    .catch(error => {
-      console.log(error);
+      hideLoader();
     });
+ 
 };
-
 searchForm.addEventListener("submit", onSearchFormSubmit);
