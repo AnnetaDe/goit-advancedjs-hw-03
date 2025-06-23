@@ -73,12 +73,8 @@ body{
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  
-
 }
 .picture-and-data-item {
-
-
   overflow: hidden;
   width: 360px;
   height: 200px;
@@ -120,7 +116,6 @@ line-height: 2;
 letter-spacing: 0.48px;
 }
     
-
 .form {
     width: 371px;
     display: block;
@@ -129,7 +124,7 @@ letter-spacing: 0.48px;
     margin-bottom: 36px;
     margin-top: 36px;
 }
-.form input{
+.form-input{
     padding: 8px 16px;
     width: 272px;
     height: 40px;

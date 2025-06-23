@@ -13,13 +13,16 @@ export const fetchPhotosByQuery = query => {
   const urlbold = 'https://pixabay.com/api/'
   // https://pixabay.com/api/?key=3024031-50bf2ca6b1e9bc3513f045fb3&q=yellow+flowers&image_type=photo
   // https://pixabay.com/api/?key=3024031-50bf2ca6b1e9bc3513f045fb3&query=13&image_type=photo&orientation=horizontal&safesearch=true
-  
-  const baseUrl = `https://pixabay.com/api/?${searchParams.toString()}`;
+
+  const baseUrl = `${urlbold}?${searchParams.toString()}`;
   console.log(baseUrl);
 
   return fetch(baseUrl).then(response => {
     if (!response.ok) {
       throw new Error(response.status);
+    }
+    if (response.status === 404) {
+      throw new Error("Not Found");
     }
     return response.json();
   });
