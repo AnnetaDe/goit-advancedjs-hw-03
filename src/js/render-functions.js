@@ -7,9 +7,7 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 // function imports
 import { fetchPhotosByQuery } from "./pixabay-api.js";
-import simpleLightbox from "simplelightbox";
 const searchForm = document.querySelector(".form");
-
 const galleryUl = document.querySelector(".gallery");
 const loaderEl = document.querySelector(".loader");
 
